@@ -6,7 +6,7 @@ This project is a Python-based news aggregator that fetches news articles from v
 
 ## Features
 
-- **Website Scraping**: The project scrapes news articles from predefined websites using techniques like DOM traversal, HTTP requests, and browser automation.
+- **Website Scraping**: The project scrapes news articles from predefined websites using techniques like  HTTP requests and browser automation.
 - **Source Selection**: Users can select their preferred news sources from a list of supported websites.
 - **Article Summarization**: The application provides a summarized version of each news article to give users a quick overview.
 - **Category Filtering**: Users can filter news articles based on predefined categories such as politics, technology, sports, etc.
