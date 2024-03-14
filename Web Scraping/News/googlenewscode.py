@@ -22,7 +22,7 @@ import time
 #     print()
     
     
-#INDIA NEWS
+# Function to scroll down a webpage
 def scroll_down(driver, scroll_pause_time):
     last_height = driver.execute_script("return document.body.scrollHeight")
 
@@ -40,7 +40,7 @@ def scroll_down(driver, scroll_pause_time):
 chrome_options = Options()
 chrome_options.add_argument("--headless") 
 
-
+#INDIA NEWS
 url = 'https://news.google.com/topics/CAAqJQgKIh9DQkFTRVFvSUwyMHZNRE55YXpBU0JXVnVMVWRDS0FBUAE?hl=en-IN&gl=IN&ceid=IN%3Aen'
 
 driver = webdriver.Chrome(options=chrome_options)
