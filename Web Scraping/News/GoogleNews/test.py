@@ -4,14 +4,12 @@ from selenium.webdriver.chrome.options import Options
 import time
 import re
 
-# Function to extract source name from the URL
 def extract_source_name(url):
     match = re.search(r'\/\/(?:www\.)?([A-Za-z0-9\-]+)\.', url)
     if match:
         return match.group(1).replace("-", " ").title()
     return "Unknown"
 
-# Function to scroll down the page
 def scroll_down(driver, scroll_pause_time):
     last_height = driver.execute_script("return document.body.scrollHeight")
 
