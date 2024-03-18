@@ -65,7 +65,7 @@ import requests
 from joblib import Parallel, delayed
 
 def get_news_text(url):
-    page = requests.get(url,timeout=10)
+    page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
     news_paragraphs = soup.find_all('p')[:2]
     news_text = '\n'.join([p.text.strip() for p in reversed(news_paragraphs)])
