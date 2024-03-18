@@ -48,7 +48,7 @@ if headlines:
     st.subheader(f"Headlines for {selected_category} Category:")
     for headline, link in zip(headlines, links):
         st.write("Headline:", headline.text)
-        st.write("Link:", "https://news.google.com" + link['href'])
+        st.write('<a style="background-color: #2C3E50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;" href="'+link['href']+'" target="_blank">Read more</a>', unsafe_allow_html=True)
         st.write("---")
 else:
     st.warning("No headlines found for the selected category.")
