@@ -282,6 +282,7 @@ def get_news_text(url):
         st.error(f"Error fetching news text: {str(e)}")
         return ""
 
+@st.cache_resource(ttl=3600)
 def scrape_page(url_pattern, tag_name, page_num):
     try:
         r = requests.get(f'{url_pattern}{page_num}')
@@ -298,6 +299,7 @@ def scrape_page(url_pattern, tag_name, page_num):
         st.error(f"Error scraping page {page_num}: {str(e)}")
         return []
 
+@st.cache_resource(ttl=3600)
 def scrape_category(url_pattern, tag_name, pages):
     results = Parallel(n_jobs=2, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
     news_data = set()
@@ -306,6 +308,7 @@ def scrape_category(url_pattern, tag_name, pages):
             news_data.add(item)
     return news_data
 
+@st.cache_resource(ttl=3600)
 def display_news(category_data):
     for headline, link, news_text in category_data:
         st.markdown(f"<h2 style='color: white; font-weight: bold;'>{headline}</h2>", unsafe_allow_html=True)
