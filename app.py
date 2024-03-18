@@ -262,7 +262,6 @@
 
 # if __name__ == "__main__":
 #     main()
-
 import streamlit as st
 import asyncio
 import aiohttp
@@ -366,7 +365,7 @@ async def main():
     if category == "India":
         news_data = await scrape_category('https://www.ndtv.com/india/page-', 'h2', 14)
     elif category == "Latest":
-        news_data = await scrape_category('https://www.ndtv.com/latest/page-', 'h2', 5)
+        news_data = await scrape_category('https://www.ndtv.com/latest/page-', 'h2', 8)
     elif category == "Cities":
         news_data = await scrape_category('https://www.ndtv.com/cities/page-', 'h2', 14)
     elif category == "Education":
