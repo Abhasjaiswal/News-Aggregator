@@ -311,6 +311,7 @@ async def scrape_page_with_retry(session, url_pattern, tag_name, page_num, retri
                 delay = 2 ** i + random.uniform(0, 1)
                 st.info(f"Retrying in {delay} seconds...")
                 await asyncio.sleep(delay)
+    st.error(f"Failed to scrape page {page_num} after {retries} retries.")
     return []
 
 async def scrape_category(url_pattern, tag_name, pages):
