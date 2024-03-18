@@ -266,7 +266,7 @@
 import streamlit as st
 from bs4 import BeautifulSoup
 import requests
-# from joblib import Parallel, delayed
+from joblib import Parallel, delayed
 import time
 
 def get_news_text(url):
@@ -296,19 +296,13 @@ def scrape_page(url_pattern, tag_name, page_num):
         st.error(f"Error scraping page {page_num}: {str(e)}")
         return []
 
-# def scrape_category(url_pattern, tag_name, pages):
-#     results = Parallel(n_jobs=2, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
-#     news_data = set()
-#     for page_result in results:
-#         for item in page_result:
-#             news_data.add(item)
-#     return news_data
 def scrape_category(url_pattern, tag_name, pages):
-    results = []
-    for page_num in range(1, pages + 1):
-        page_result = scrape_page(url_pattern, tag_name, page_num)
-        results.extend(page_result)
-    return results
+    results = Parallel(n_jobs=2, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
+    news_data = set()
+    for page_result in results:
+        for item in page_result:
+            news_data.add(item)
+    return news_data
 
 def display_news(category_data):
     for headline, link, news_text in category_data:
