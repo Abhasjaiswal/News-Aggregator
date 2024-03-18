@@ -84,43 +84,81 @@ def scrape_page(url_pattern, tag_name, page_num):
     return results
 
 def scrape_category(url_pattern, tag_name, pages):
-    results = Parallel(n_jobs=-1)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
+    results = Parallel(n_jobs=32, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
     news_data = set()
     for page_result in results:
         for item in page_result:
             news_data.add(item)
     return news_data
 
+# def display_news(category_data):
+#     for headline, link, news_text in category_data:
+#         st.write("**Headline:**", headline)
+#         st.write("**News Text:**", news_text)
+#         # st.markdown(f"[Read more]({link})")
+#         st.write('<a style="background-color: #2C3E50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;" href="'+link+'" target="_blank">Read more</a>', unsafe_allow_html=True)
+#         st.write("---")
+
 def display_news(category_data):
     for headline, link, news_text in category_data:
-        st.write("**Headline:**", headline)
-        st.write("**Link:**", link)
-        st.write("**News Text:**", news_text)
+        st.markdown(f"<h2 style='color: white; font-weight: bold;'>{headline}</h2>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: white;'>{news_text}</p>", unsafe_allow_html=True)
+        st.write('<a style="background-color: #2C3E50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;" href="'+link+'" target="_blank">Read more</a>', unsafe_allow_html=True)
         st.write("---")
 
 def main():
-    st.title("NDTV News Browser")
+    # st.title("News Aggregator")
+    # st.subheader("A project by Abhas Jaiswal")
+    import streamlit as st
 
-    category = st.selectbox("Select Category", ["India", "Latest", "Cities", "Education", "Trending", "Offbeat", "South"])
+# Custom CSS to style the title and subheader
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nasalization&display=swap');
+    .title {
+        color: white;
+        font-size: 36px;
+        font-family: 'Nasalization', sans-serif;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .subheader {
+        color: white;
+        font-size: 18px;
+        font-family: 'Nasalization', sans-serif;
+        text-align: center;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-    if category == "India":
-        news_data = scrape_category('https://www.ndtv.com/india/page-', 'h2', 14)
-    elif category == "Latest":
-        news_data = scrape_category('https://www.ndtv.com/latest/page-', 'h2', 8)
-    elif category == "Cities":
-        news_data = scrape_category('https://www.ndtv.com/cities/page-', 'h2', 14)
-    elif category == "Education":
-        news_data = scrape_category('https://www.ndtv.com/education/page-', 'h2', 14)
-    elif category == "Trending":
-        news_data = scrape_category('https://www.ndtv.com/trends', 'h3', 1)
-    elif category == "Offbeat":
-        news_data = scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 14)
-    elif category == "South":
-        news_data = scrape_category('https://www.ndtv.com/south/page-', 'h2', 14)
-    else:
-        st.error("Invalid category selected.")
+# Title and subheader with custom styling
+st.markdown('<p class="title">News Aggregator</p>', unsafe_allow_html=True)
+st.markdown('<p class="subheader">A project by Abhas Jaiswal</p>', unsafe_allow_html=True)
 
-    display_news(news_data)
+category = st.selectbox("Select Category", ["India", "Latest", "Cities", "Education", "Trending", "Offbeat", "South"])
+
+if category == "India":
+    news_data = scrape_category('https://www.ndtv.com/india/page-', 'h2', 14)
+elif category == "Latest":
+    news_data = scrape_category('https://www.ndtv.com/latest/page-', 'h2', 8)
+elif category == "Cities":
+    news_data = scrape_category('https://www.ndtv.com/cities/page-', 'h2', 14)
+elif category == "Education":
+    news_data = scrape_category('https://www.ndtv.com/education/page-', 'h2', 14)
+elif category == "Trending":
+    news_data = scrape_category('https://www.ndtv.com/trends', 'h3', 1)
+elif category == "Offbeat":
+    news_data = scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 14)
+elif category == "South":
+    news_data = scrape_category('https://www.ndtv.com/south/page-', 'h2', 14)
+else:
+    st.error("Invalid category selected.")
+
+display_news(news_data)
 
 if __name__ == "__main__":
     main()
