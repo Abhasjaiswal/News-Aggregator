@@ -192,6 +192,7 @@ def scrape_page(url_pattern, tag_name, page_num):
         return []
 
 # Function to scrape multiple pages of a category
+@st.cache
 def scrape_category(url_pattern, tag_name, pages):
     start_time = time.time()
     results = Parallel(n_jobs=8)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
@@ -241,24 +242,26 @@ def main():
 
     category = st.selectbox("Select Category", ["India", "Latest", "Cities", "Education", "Trending", "Offbeat", "South"])
 
-    if category == "India":
-        news_data = scrape_category('https://www.ndtv.com/india/page-', 'h2', 14)
-    elif category == "Latest":
-        news_data = scrape_category('https://www.ndtv.com/latest/page-', 'h2', 8)
-    elif category == "Cities":
-        news_data = scrape_category('https://www.ndtv.com/cities/page-', 'h2', 14)
-    elif category == "Education":
-        news_data = scrape_category('https://www.ndtv.com/education/page-', 'h2', 14)
-    elif category == "Trending":
-        news_data = scrape_category('https://www.ndtv.com/trends', 'h3', 1)
-    elif category == "Offbeat":
-        news_data = scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 14)
-    elif category == "South":
-        news_data = scrape_category('https://www.ndtv.com/south/page-', 'h2', 14)
-    else:
-        st.error("Invalid category selected.")
+    if category:
+        with st.spinner(f"Fetching {category} news..."):
+            if category == "India":
+                news_data = scrape_category('https://www.ndtv.com/india/page-', 'h2', 14)
+            elif category == "Latest":
+                news_data = scrape_category('https://www.ndtv.com/latest/page-', 'h2', 8)
+            elif category == "Cities":
+                news_data = scrape_category('https://www.ndtv.com/cities/page-', 'h2', 14)
+            elif category == "Education":
+                news_data = scrape_category('https://www.ndtv.com/education/page-', 'h2', 14)
+            elif category == "Trending":
+                news_data = scrape_category('https://www.ndtv.com/trends', 'h3', 1)
+            elif category == "Offbeat":
+                news_data = scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 14)
+            elif category == "South":
+                news_data = scrape_category('https://www.ndtv.com/south/page-', 'h2', 14)
+            else:
+                st.error("Invalid category selected.")
 
-    display_news(news_data)
+        display_news(news_data)
 
 if __name__ == "__main__":
     main()
