@@ -264,61 +264,49 @@
 #     main()
 
 import streamlit as st
-import asyncio
-import aiohttp
 from bs4 import BeautifulSoup
+import requests
+from joblib import Parallel, delayed
 import time
 
-async def fetch_news_text(session, url):
-    try:
-        async with session.get(url, timeout=30) as response:
-            if response.status == 200:
-                page_content = await response.text()
-                soup = BeautifulSoup(page_content, 'html.parser')
-                news_paragraphs = soup.find_all('p')[:2]
-                news_text = '\n'.join([p.text.strip() for p in reversed(news_paragraphs)])
-                return news_text
-            else:
-                st.error(f"Failed to fetch news text from {url}. HTTP Status: {response.status}")
-                return None
-    except aiohttp.ClientError as e:
-        st.error(f"Error fetching news text from {url}: {e}")
-        return None
 
-async def scrape_page(session, url_pattern, tag_name, page_num):
+@st.cache_resource(ttl=3600)  # Cache results for 1 hour (adjust as needed)
+def get_news_text(url):
     try:
-        async with session.get(f'{url_pattern}{page_num}', timeout=30) as response:
-            if response.status == 200:
-                page_content = await response.text()
-                soup = BeautifulSoup(page_content, 'html.parser')
-                news_items = soup.find_all(tag_name)
-                results = []
-                for item in news_items:
-                    headline = item.text.strip()
-                    link = item.a['href']
-                    news_text = await fetch_news_text(session, link)
-                    if news_text is not None:
-                        results.append((headline, link, news_text))
-                return results
-            else:
-                st.error(f"Failed to scrape page {page_num}. HTTP Status: {response.status}")
-                return []
-    except aiohttp.ClientError as e:
-        st.error(f"Error scraping page {page_num}: {e}")
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, 'html.parser')
+        news_paragraphs = soup.find_all('p')[:2]
+        news_text = '\n'.join([p.text.strip() for p in reversed(news_paragraphs)])
+        return news_text
+    except Exception as e:
+        st.error(f"Error fetching news text: {str(e)}")
+        return ""
+
+@st.cache_resource(ttl=3600)
+def scrape_page(url_pattern, tag_name, page_num):
+    try:
+        r = requests.get(f'{url_pattern}{page_num}',timeout=30)
+        soup = BeautifulSoup(r.text, 'html.parser')
+        news_items = soup.find_all(tag_name)
+        results = []
+        for item in news_items:
+            headline = item.text.strip()
+            link = item.a['href']
+            news_text = get_news_text(link)
+            results.append((headline, link, news_text))
+        return results
+    except Exception as e:
+        st.error(f"Error scraping page {page_num}: {str(e)}")
         return []
 
-async def scrape_category(url_pattern, tag_name, pages):
-    async with aiohttp.ClientSession() as session:
-        tasks = [scrape_page(session, url_pattern, tag_name, page_num) for page_num in range(1, pages + 1)]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        news_data = set()
-        for page_result in results:
-            if isinstance(page_result, list):
-                for item in page_result:
-                    news_data.add(item)
-            else:
-                st.error(f"Error occurred during scraping: {page_result}")
-        return news_data
+
+def scrape_category(url_pattern, tag_name, pages):
+    results = Parallel(n_jobs=2, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
+    news_data = set()
+    for page_result in results:
+        for item in page_result:
+            news_data.add(item)
+    return news_data
 
 def display_news(category_data):
     for headline, link, news_text in category_data:
@@ -327,7 +315,7 @@ def display_news(category_data):
         st.write('<a style="background-color: #2C3E50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;" href="'+link+'" target="_blank">Read more</a>', unsafe_allow_html=True)
         st.write("---")
 
-async def main():
+def main():
     st.markdown(
         """
         <style>
@@ -357,23 +345,24 @@ async def main():
     category = st.selectbox("Select Category", ["India", "Latest", "Cities", "Education", "Trending", "Offbeat", "South"])
 
     if category == "India":
-        news_data = await scrape_category('https://www.ndtv.com/india/page-', 'h2', 14)
+        news_data = scrape_category('https://www.ndtv.com/india/page-', 'h2', 14)
     elif category == "Latest":
-        news_data = await scrape_category('https://www.ndtv.com/latest/page-', 'h2', 8)
+        news_data = scrape_category('https://www.ndtv.com/latest/page-', 'h2', 8)
     elif category == "Cities":
-        news_data = await scrape_category('https://www.ndtv.com/cities/page-', 'h2', 14)
+        news_data = scrape_category('https://www.ndtv.com/cities/page-', 'h2', 14)
     elif category == "Education":
-        news_data = await scrape_category('https://www.ndtv.com/education/page-', 'h2', 14)
+        news_data = scrape_category('https://www.ndtv.com/education/page-', 'h2', 14)
     elif category == "Trending":
-        news_data = await scrape_category('https://www.ndtv.com/trends', 'h3', 1)
+        news_data = scrape_category('https://www.ndtv.com/trends', 'h3', 1)
     elif category == "Offbeat":
-        news_data = await scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 14)
+        news_data = scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 14)
     elif category == "South":
-        news_data = await scrape_category('https://www.ndtv.com/south/page-', 'h2', 14)
+        news_data = scrape_category('https://www.ndtv.com/south/page-', 'h2', 14)
     else:
         st.error("Invalid category selected.")
 
     display_news(news_data)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
+
