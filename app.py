@@ -269,6 +269,8 @@ import requests
 from joblib import Parallel, delayed
 import time
 
+
+@st.cache(ttl=3600)  # Cache results for 1 hour (adjust as needed)
 def get_news_text(url):
     try:
         page = requests.get(url)
