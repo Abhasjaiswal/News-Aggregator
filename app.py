@@ -90,7 +90,7 @@ def scrape_category(url_pattern, tag_name, pages):
         for item in page_result:
             news_data.add(item)
     return news_data
-@st.
+
 def display_news(category_data):
     for headline, link, news_text in category_data:
         st.write("**Headline:**", headline)
