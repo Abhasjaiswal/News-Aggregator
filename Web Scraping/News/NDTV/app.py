@@ -107,11 +107,8 @@ def display_news(category_data):
         st.write("---")
 
 def main():
-    # st.title("News Aggregator")
-    # st.subheader("A project by Abhas Jaiswal")
-    import streamlit as st
+     import streamlit as st
 
-# Custom CSS to style the title and subheader
 st.markdown(
     """
     <style>
@@ -135,7 +132,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Title and subheader with custom styling
+
 st.markdown('<p class="title">News Aggregator</p>', unsafe_allow_html=True)
 st.markdown('<p class="subheader">A project by Abhas Jaiswal</p>', unsafe_allow_html=True)
 
