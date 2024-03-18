@@ -267,11 +267,12 @@ import streamlit as st
 import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
+import random
 import time
 
 async def fetch_news_text(session, url):
     try:
-        async with session.get(url, timeout=30) as response:
+        async with session.get(url, timeout=30, headers={"User-Agent": "Mozilla/5.0"}) as response:
             if response.status == 200:
                 page_content = await response.text()
                 soup = BeautifulSoup(page_content, 'html.parser')
@@ -285,31 +286,37 @@ async def fetch_news_text(session, url):
         st.error(f"Error fetching news text from {url}: {e}")
         return None
 
-async def scrape_page(session, url_pattern, tag_name, page_num):
-    try:
-        async with session.get(f'{url_pattern}{page_num}', timeout=30) as response:
-            if response.status == 200:
-                page_content = await response.text()
-                soup = BeautifulSoup(page_content, 'html.parser')
-                news_items = soup.find_all(tag_name)
-                results = []
-                for item in news_items:
-                    headline = item.text.strip()
-                    link = item.a['href']
-                    news_text = await fetch_news_text(session, link)
-                    if news_text is not None:
-                        results.append((headline, link, news_text))
-                return results
-            else:
-                st.error(f"Failed to scrape page {page_num}. HTTP Status: {response.status}")
-                return []
-    except aiohttp.ClientError as e:
-        st.error(f"Error scraping page {page_num}: {e}")
-        return []
+async def scrape_page_with_retry(session, url_pattern, tag_name, page_num, retries=3):
+    for i in range(retries):
+        try:
+            async with session.get(f'{url_pattern}{page_num}', timeout=30, headers={"User-Agent": "Mozilla/5.0"}) as response:
+                if response.status == 200:
+                    page_content = await response.text()
+                    soup = BeautifulSoup(page_content, 'html.parser')
+                    news_items = soup.find_all(tag_name)
+                    results = []
+                    for item in news_items:
+                        headline = item.text.strip()
+                        link = item.a['href']
+                        news_text = await fetch_news_text(session, link)
+                        if news_text is not None:
+                            results.append((headline, link, news_text))
+                    return results
+                else:
+                    st.error(f"Failed to scrape page {page_num}. HTTP Status: {response.status}")
+                    return []
+        except aiohttp.ClientError as e:
+            st.error(f"Error scraping page {page_num}: {e}")
+            if i < retries - 1:
+                delay = 2 ** i + random.uniform(0, 1)
+                st.info(f"Retrying in {delay} seconds...")
+                await asyncio.sleep(delay)
+    st.error(f"Failed to scrape page {page_num} after {retries} retries.")
+    return []
 
 async def scrape_category(url_pattern, tag_name, pages):
     async with aiohttp.ClientSession() as session:
-        tasks = [scrape_page(session, url_pattern, tag_name, page_num) for page_num in range(1, pages + 1)]
+        tasks = [scrape_page_with_retry(session, url_pattern, tag_name, page_num) for page_num in range(1, pages + 1)]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         news_data = set()
         for page_result in results:
@@ -357,19 +364,19 @@ async def main():
     category = st.selectbox("Select Category", ["India", "Latest", "Cities", "Education", "Trending", "Offbeat", "South"])
 
     if category == "India":
-        news_data = await scrape_category('https://www.ndtv.com/india/page-', 'h2', 8)
+        news_data = await scrape_category('https://www.ndtv.com/india/page-', 'h2', 14)
     elif category == "Latest":
         news_data = await scrape_category('https://www.ndtv.com/latest/page-', 'h2', 8)
     elif category == "Cities":
-        news_data = await scrape_category('https://www.ndtv.com/cities/page-', 'h2', 8)
+        news_data = await scrape_category('https://www.ndtv.com/cities/page-', 'h2', 14)
     elif category == "Education":
-        news_data = await scrape_category('https://www.ndtv.com/education/page-', 'h2', 8)
+        news_data = await scrape_category('https://www.ndtv.com/education/page-', 'h2', 14)
     elif category == "Trending":
-        news_data = await scrape_category('https://www.ndtv.com/trends', 'h3', 8)
+        news_data = await scrape_category('https://www.ndtv.com/trends', 'h3', 1)
     elif category == "Offbeat":
-        news_data = await scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 8)
+        news_data = await scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 14)
     elif category == "South":
-        news_data = await scrape_category('https://www.ndtv.com/south/page-', 'h2', 8)
+        news_data = await scrape_category('https://www.ndtv.com/south/page-', 'h2', 14)
     else:
         st.error("Invalid category selected.")
 
