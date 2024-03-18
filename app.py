@@ -446,19 +446,19 @@ async def main():
     category = st.selectbox("Select Category", ["India", "Latest", "Cities", "Education", "Trending", "Offbeat", "South"])
 
     if category == "India":
-        news_data = await scrape_category('https://www.ndtv.com/india/page-', 'h2', 14)
+        news_data = await scrape_category('https://www.ndtv.com/india/page-', 'h2', 1)
     elif category == "Latest":
-        news_data = await scrape_category('https://www.ndtv.com/latest/page-', 'h2', 8)
+        news_data = await scrape_category('https://www.ndtv.com/latest/page-', 'h2', 1)
     elif category == "Cities":
-        news_data = await scrape_category('https://www.ndtv.com/cities/page-', 'h2', 14)
+        news_data = await scrape_category('https://www.ndtv.com/cities/page-', 'h2', 1)
     elif category == "Education":
-        news_data = await scrape_category('https://www.ndtv.com/education/page-', 'h2', 14)
+        news_data = await scrape_category('https://www.ndtv.com/education/page-', 'h2', 1)
     elif category == "Trending":
         news_data = await scrape_category('https://www.ndtv.com/trends', 'h3', 1)
     elif category == "Offbeat":
-        news_data = await scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 14)
+        news_data = await scrape_category('https://www.ndtv.com/offbeat/page-', 'h2', 1)
     elif category == "South":
-        news_data = await scrape_category('https://www.ndtv.com/south/page-', 'h2', 14)
+        news_data = await scrape_category('https://www.ndtv.com/south/page-', 'h2', 1)
     else:
         st.error("Invalid category selected.")
 
