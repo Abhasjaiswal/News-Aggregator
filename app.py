@@ -65,7 +65,7 @@ import requests
 from joblib import Parallel, delayed
 
 def get_news_text(url):
-    page = requests.get(url)
+    page = requests.get(url,timeout=10)
     soup = BeautifulSoup(page.text, 'html.parser')
     news_paragraphs = soup.find_all('p')[:2]
     news_text = '\n'.join([p.text.strip() for p in reversed(news_paragraphs)])
@@ -84,7 +84,7 @@ def scrape_page(url_pattern, tag_name, page_num):
     return results
 
 def scrape_category(url_pattern, tag_name, pages):
-    results = Parallel(n_jobs=32, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
+    results = Parallel(n_jobs=2, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
     news_data = set()
     for page_result in results:
         for item in page_result:
