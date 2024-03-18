@@ -308,7 +308,7 @@ def scrape_category(url_pattern, tag_name, pages):
             news_data.add(item)
     return news_data
 
-@st.cache_resource(ttl=3600)
+@st.cache_data(ttl=3600)
 def display_news(category_data):
     for headline, link, news_text in category_data:
         st.markdown(f"<h2 style='color: white; font-weight: bold;'>{headline}</h2>", unsafe_allow_html=True)
