@@ -285,7 +285,7 @@ def get_news_text(url):
 @st.cache_resource(ttl=3600)
 def scrape_page(url_pattern, tag_name, page_num):
     try:
-        r = requests.get(f'{url_pattern}{page_num}')
+        r = requests.get(f'{url_pattern}{page_num}',timeout=30)
         soup = BeautifulSoup(r.text, 'html.parser')
         news_items = soup.find_all(tag_name)
         results = []
