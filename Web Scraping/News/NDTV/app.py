@@ -63,7 +63,6 @@ import streamlit as st
 from bs4 import BeautifulSoup
 import requests
 from joblib import Parallel, delayed
-
 def get_news_text(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
