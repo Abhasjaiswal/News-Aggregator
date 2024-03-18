@@ -297,7 +297,8 @@ def scrape_page(url_pattern, tag_name, page_num):
         return []
 
 def scrape_category(url_pattern, tag_name, pages):
-    results = Parallel(n_jobs=2, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
+    results = Parallel(n_jobs=2, verbose=100)(delayed(scrape_page, min_n_bytes=1e6)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
+    news_data = []
     news_data = set()
     for page_result in results:
         for item in page_result:
