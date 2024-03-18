@@ -72,7 +72,6 @@ def get_news_text(url):
     news_text = '\n'.join([p.text.strip() for p in reversed(news_paragraphs)])
     return news_text
 
-
 @st.cache_resource
 def scrape_page(url_pattern, tag_name, page_num):
     r = requests.get(f'{url_pattern}{page_num}')
@@ -86,16 +85,15 @@ def scrape_page(url_pattern, tag_name, page_num):
         results.append((headline, link, news_text))
     return results
 
-@st.cache_data
+@st.cache_resource
 def scrape_category(url_pattern, tag_name, pages):
-    results = Parallel(n_jobs=32, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
+    results = Parallel(n_jobs=1, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
     news_data = set()
     for page_result in results:
         for item in page_result:
             news_data.add(item)
     return news_data
-
-
+@st.cache_resource
 def display_news(category_data):
     for headline, link, news_text in category_data:
         st.write("**Headline:**", headline)
@@ -103,7 +101,7 @@ def display_news(category_data):
         # st.markdown(f"[Read more]({link})")
         st.write('<a style="background-color: #2C3E50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;" href="'+link+'" target="_blank">Read more</a>', unsafe_allow_html=True)
         st.write("---")
-@st.cache_data
+@st.cache_resource
 def display_news(category_data):
     for headline, link, news_text in category_data:
         st.markdown(f"<h2 style='color: white; font-weight: bold;'>{headline}</h2>", unsafe_allow_html=True)
