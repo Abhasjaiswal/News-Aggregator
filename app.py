@@ -270,7 +270,7 @@ from joblib import Parallel, delayed
 import time
 
 
-@st.cache_resource  # Cache results for 1 hour (adjust as needed)
+@st.cache_resource  
 def get_news_text(url):
     try:
         page = requests.get(url)
@@ -282,7 +282,6 @@ def get_news_text(url):
         st.error(f"Error fetching news text: {str(e)}")
         return ""
 
-@st.cache_resource(ttl=3600)
 def scrape_page(url_pattern, tag_name, page_num):
     try:
         r = requests.get(f'{url_pattern}{page_num}',timeout=30)
@@ -301,7 +300,7 @@ def scrape_page(url_pattern, tag_name, page_num):
 
 
 def scrape_category(url_pattern, tag_name, pages):
-    results = Parallel(n_jobs=2, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
+    results = Parallel(n_jobs=32, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
     news_data = set()
     for page_result in results:
         for item in page_result:
