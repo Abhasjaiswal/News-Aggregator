@@ -270,7 +270,6 @@ from joblib import Parallel, delayed
 import time
 
 
-@st.cache_resource  
 def get_news_text(url):
     try:
         page = requests.get(url)
@@ -300,7 +299,10 @@ def scrape_page(url_pattern, tag_name, page_num):
 
 
 def scrape_category(url_pattern, tag_name, pages):
-    results = Parallel(n_jobs=32, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
+    if pages == 1:  # If only one page, avoid parallelism
+        results = [scrape_page(url_pattern, tag_name, 1)]
+    else:
+        results = Parallel(n_jobs=32, verbose=100)(delayed(scrape_page)(url_pattern, tag_name, page_num) for page_num in range(1, pages + 1))
     news_data = set()
     for page_result in results:
         for item in page_result:
