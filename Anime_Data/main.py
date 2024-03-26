@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+import mysql.connector
+
 
 def extract_anime_info(url):
     r = requests.get(url)
@@ -52,7 +54,7 @@ columns_order = ['Title', 'Synonyms', 'Japanese', 'English', 'Type', 'Episodes',
 df = df.reindex(columns=columns_order)
 print(df)
 
-df.to_csv('anime.csv')
+df.to_csv('anime2.csv')
 
 
 # Similary follow the same approach for other genres and modify the number of pages you want to scrap 
