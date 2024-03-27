@@ -28,7 +28,7 @@ def scrape_page(url):
             page_data.append({'headline': headline, 'link': link_href, 'short_news': short_news})
     return page_data
 
-def scrape_category_parallel(category, start_page=1, end_page=30):
+def scrape_category_parallel(category, start_page=1, end_page=31):
     base_url = base_urls.get(category)
     if not base_url:
         st.error("Invalid category.")
