@@ -177,8 +177,10 @@ def main():
         unsafe_allow_html=True
     )
 
-    st.markdown('<p class="title">News Aggregator</p>', unsafe_allow_html=True)
-    st.markdown('<p class="subheader">A project by Abhas Jaiswal</p>', unsafe_allow_html=True)
+
+    st.markdown('<p class="title" style="font-weight: bold; font-size: 46px; font-family: \'Nasalization\', sans-serif;">News Aggregator</p>', unsafe_allow_html=True)
+
+    st.markdown('<p class="subheader" style="font-weight: bold; font-size: 24px;">A project by Abhas Jaiswal</p>', unsafe_allow_html=True)
 
     category = st.selectbox("Select Category", list(base_urls.keys()))
 
