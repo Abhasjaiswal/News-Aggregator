@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import requests
 import base64
 from joblib import Parallel, delayed
-
+from about_me import display_about_me
 def set_bg_hack(main_bg):
     # set bg name
     main_bg_ext = "png"
@@ -24,7 +24,7 @@ def set_bg_hack(main_bg):
 def streamlit_menu():
     selected = option_menu(
         menu_title="Main Menu",  # required
-        options=["Home", "Contact Me", "Project Documentation"],  # required
+        options=["Home", "About Me", "Project Documentation"],  # required
         default_index=0,  # optional
     )
     return selected
@@ -84,8 +84,8 @@ def main():
     if selected_option == "Home":
         selected_category = st.selectbox("Select Category", list(base_urls.keys()))
         news_data = scrape_category_parallel(selected_category)
-    elif selected_option == "Contact Me":
-        st.write("Contact Information")
+    elif selected_option == "About Me":
+        display_about_me()
     elif selected_option == "Project Documentation":
         st.write("Project Documentation")
     else:
