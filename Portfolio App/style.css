@@ -11,7 +11,10 @@ h5 {
 }
 
 img {
-    margin-left: 17.2rem;
+    border-radius: 50%; 
+    margin-left: 68%; 
+    margin-right: auto; 
+    display: block; 
 }
 
 #MainMenu {
