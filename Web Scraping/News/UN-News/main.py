@@ -18,7 +18,7 @@ topic_urls = [
 
 for topic_name, topic_url in topic_urls:
     print(f"Articles for {topic_name}:")
-    for page_num in range(0,10): #PAGE NUMBERS TO BE MODIFIED HERE
+    for page_num in range(0,2): #PAGE NUMBERS TO BE MODIFIED HERE (On the Website there are around 430 pages as the news is from 2001)
         url = topic_url.format(page_num)
         page = requests.get(url)
         soup = BeautifulSoup(page.text, 'html.parser')
