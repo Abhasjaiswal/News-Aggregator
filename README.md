@@ -22,7 +22,7 @@ This project is a Python-based news aggregator that fetches news articles from v
 - **Selenium**: For browser automation and dynamic content scraping.
 - **Beautiful Soup**: For parsing HTML and extracting data from web pages.
 - **Requests**: For making HTTP requests and fetching web content.
-- **Other standard libraries**: Used for various functionalities such as GUI development (e.g., Tkinter) and data manipulation.
+- **Other standard libraries**: Used for various functionalities , Used Streamlit for GUI Development.
 
 ## Installation
 
