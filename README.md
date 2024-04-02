@@ -22,7 +22,8 @@ This project is a Python-based news aggregator that fetches news articles from v
 - **Selenium**: For browser automation and dynamic content scraping.
 - **Beautiful Soup**: For parsing HTML and extracting data from web pages.
 - **Requests**: For making HTTP requests and fetching web content.
-- **Other standard libraries**: Used for various functionalities , Used Streamlit for GUI Development.
+- **Google GenAI API**: For generating summaries of news articles.
+- **Other standard libraries**: Used for various functionalities, Used Streamlit for GUI Development.
 
 ## Installation
 
@@ -30,6 +31,19 @@ This project is a Python-based news aggregator that fetches news articles from v
 2. Install the required dependencies using pip:
 4. Ensure you have a compatible web driver installed (e.g., ChromeDriver for Selenium).
 
+## Additional News Sources Integration
+
+We have integrated additional news sources into the project to provide users with a wider selection of news content. The following sources have been added:
+...
+
+## News Summarization with Google GenAI API
+
+The project utilizes the Google GenAI API for generating summaries of news articles. This API provides advanced natural language processing capabilities to summarize textual content accurately and efficiently.
+
+To generate a summary of a news article, the application sends the article's text to the Google GenAI API, which processes the text and returns a concise summary. The project incorporates safety settings to ensure that the generated summaries adhere to predefined thresholds for harmful content categories such as hate speech, harassment, and sexually explicit content.
+
+By leveraging the Google GenAI API, the project enhances the news consumption experience by providing users with summarized versions of news articles, enabling quick comprehension and efficient browsing of multiple news stories.
+
 ## Conclusion
 
-The News Aggregator Project offers a convenient solution for users to access and consume news articles from diverse online sources. By leveraging web scraping techniques and providing customization options, the project aims to enhance the news consumption experience for users. With further improvements and enhancements, the project has the potential to become a valuable tool for staying informed in today's fast-paced world.
+The News Aggregator Project offers a convenient solution for users to access and consume news articles from diverse online sources. By leveraging web scraping techniques, integrating additional news sources, and incorporating the Google GenAI API for news summarization, the project aims to enhance the news consumption experience for users. With further improvements and enhancements, the project has the potential to become a valuable tool for staying informed in today's fast-paced world.
