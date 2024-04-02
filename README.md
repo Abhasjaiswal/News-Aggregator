@@ -33,4 +33,3 @@ This project is a Python-based news aggregator that fetches news articles from v
 ## Conclusion
 
 The News Aggregator Project offers a convenient solution for users to access and consume news articles from diverse online sources. By leveraging web scraping techniques and providing customization options, the project aims to enhance the news consumption experience for users. With further improvements and enhancements, the project has the potential to become a valuable tool for staying informed in today's fast-paced world.
-
