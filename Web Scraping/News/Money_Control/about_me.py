@@ -118,16 +118,13 @@ def display_about_me():
     with open("style.css") as f:
         st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
 
-    # Header 
     st.write('''
-    # About Me
-    # Abhas Jaiswal
-    # B.tech CSE in Data Science 
-    ##### *Aspiring Data Scientist* 
-    ''')
+# Abhas Jaiswal
+##### *Aspiring Data Scientist* 
+''')
 
     image = Image.open('Abhas_DP.jpeg')
-    st.image(image, width=150)
+    st.image(image, width=300)
 
     def txt(a, b):
         col1, col2 = st.columns([4,1])
