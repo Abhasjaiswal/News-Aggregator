@@ -33,8 +33,7 @@ This project is a Python-based news aggregator that fetches news articles from v
 
 ## Additional News Sources Integration
 
-We have integrated additional news sources into the project to provide users with a wider selection of news content. The following sources have been added:
-...
+We have integrated additional news sources into the project to provide users with a wider selection of news content. 
 
 ## News Summarization with Google GenAI API
 
