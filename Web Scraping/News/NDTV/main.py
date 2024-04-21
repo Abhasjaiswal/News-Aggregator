@@ -1,11 +1,42 @@
 from bs4 import BeautifulSoup
 import requests
 from joblib import Parallel, delayed
+import google.generativeai as genai
+import os
+from dotenv import load_dotenv
+load_dotenv()
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
+
+safety_settings = [
+    {
+        "category": "HARM_CATEGORY_DANGEROUS",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_NONE",
+    },
+]
+api_key = os.getenv('API_KEY')
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel('gemini-pro')
 
 def get_news_text(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'lxml')
-    news_paragraphs = soup.find_all('p')[:2]
+    news_paragraphs = soup.find_all('p')
     news_text = '\n'.join([p.text.strip() for p in reversed(news_paragraphs)])
     return news_text
 
@@ -26,7 +57,7 @@ def process_category(category_params):
     return scrape_category(*category_params)
 
 categories = [
-    ('https://www.ndtv.com/india/page-', 'h2', 14),
+    ('https://www.ndtv.com/india/page-', 'h2', 1),
     ('https://www.ndtv.com/latest/page-', 'h2', 8),
     ('https://www.ndtv.com/cities/page-', 'h2', 14),
     ('https://www.ndtv.com/education/page-', 'h2', 14),
@@ -36,11 +67,11 @@ categories = [
 ]
 
 results = Parallel(n_jobs=32, verbose=100)(delayed(process_category)(category_params) for category_params in categories)
-
 for category, data in zip(categories, results):
     print(f"{category[0]}:")
     for headline, link, news_text in data:
         print(headline)
         print(link)
-        print(news_text)
+        response = model.generate_content('summarise this news article in short but dont miss on anything:  '+ news_text, safety_settings=safety_settings)
+        print(response.text)
         print()
